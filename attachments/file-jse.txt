@@ -1,0 +1,467 @@
+===== FILE TREE =====
+skills/advanced-app-builder/
+├── SKILL.md
+├── references/
+│   ├── stack-matrix.md
+│   ├── data-modeling.md
+│   ├── auth-and-permissions.md
+│   ├── deployment-targets.md
+│   ├── testing-patterns.md
+│   ├── error-shapes.md
+│   └── frontend-components.md
+└── assets/
+    ├── app-skeleton/
+    └── checklists/
+        ├── pre-build.md
+        └── pre-ship.md
+
+===== FILE: skills/advanced-app-builder/SKILL.md =====
+---
+name: advanced-app-builder
+description: Builds complete, production-grade applications end to end — architecture, data model, auth, UI, tests, deployment. Use when the user asks to build, scaffold, or ship an app, MVP, SaaS product, internal tool, dashboard, API service, or full-stack feature; when they describe a product idea and expect working software; or when an existing project needs a feature built to production standard rather than a demo. Also use for architecture review, stack selection, and refactors of apps that have outgrown their structure.
+license: MIT
+---
+
+# Advanced App Builder
+
+Ship software that runs in production. Working, complete, and maintainable — not a demo that needs a week of repair before anyone can use it.
+
+## When this applies
+
+App creation, scaffolding, full-stack features, MVPs, SaaS, internal tools, dashboards, APIs, refactors, architecture decisions, deployment. Not for isolated snippets, single-file scripts, or algorithm exercises — those don't need this ceremony.
+
+## Non-negotiables
+
+1. **Run it before you claim it works.** If you can't execute, say exactly which parts are untested.
+2. **Complete files.** No `// ... rest of implementation`, no `TODO: add validation`, no stubs that throw.
+3. **One migration path.** Schema changes ship with the migration, not a note saying to add one later.
+4. **No secrets in code.** Env vars, `.env.example`, and a real check that fails loudly if one is missing.
+5. **Every route validated.** Auth, input schema, and error shape on every endpoint — including the boring ones.
+6. **Ask nothing you can decide.** State the decision and the reason in one line, then move.
+7. **Irreversible decisions get confirmed.** Money, PII, compliance, public API shape, data deletion. Everything else proceeds on an assumption.
+
+## Phase 0 — Frame
+
+Five lines. No prose, no headers, no restating the request.
+
+- **What it does** — one sentence, user-facing.
+- **Who for** — the actual actor, not "users."
+- **Core loop** — the single flow that must work.
+- **Out of scope** — three things explicitly deferred.
+- **Hard constraints** — runtime, hosting, budget, existing stack, deadline.
+
+If the user gave all five, skip to Phase 1. If they gave none, infer all five and label them as assumptions.
+
+Ambiguity that changes the architecture gets one question. Everything else gets an assumption. Never more than one question in Phase 0.
+
+## Phase 1 — Architect
+
+Produce, before implementation:
+
+**Data model.** Entities, fields, types, relationships, indexes. Every entity gets `id`, `created_at`, `updated_at`. Every foreign key gets an index. Soft delete where audit matters; hard delete where it doesn't. See `references/data-modeling.md`.
+
+**Permission matrix.** Row per entity, column per role, cell says read/write/own/none. Enforce server-side — the UI check is cosmetic. See `references/auth-and-permissions.md`.
+
+**Route table.** Method, path, auth requirement, input schema, success shape, failure codes.
+
+**Failure modes.** For each core-loop step: what breaks, what the user sees, how it recovers.
+
+**Stack choice** from `references/stack-matrix.md`, with one line of justification. Default to the boring option the user's environment already supports. Novelty is a cost, not a feature.
+
+Auth follows `references/auth-and-permissions.md`. Error format follows `references/error-shapes.md`. Components follow `references/frontend-components.md`. Tests follow `references/testing-patterns.md`. Deploy follows `references/deployment-targets.md`.
+
+Run `assets/checklists/pre-build.md` before leaving Phase 1.
+
+Post the architecture as a short block, then start building without waiting for approval unless the user asked to review.
+
+## Phase 2 — Build
+
+Order matters. Follow it:
+
+1. Scaffold, dependencies, env plumbing, config loading that fails fast.
+2. Schema and migrations. Run them. Confirm they apply and roll back.
+3. Auth and session handling. Prove a request can be authenticated and rejected.
+4. Core loop, end to end, ugly UI allowed. **Get it working before it looks good.**
+5. Remaining routes and screens.
+6. Validation, error handling, empty and loading states.
+7. Tests: happy path, one auth failure, one validation failure per route.
+8. Styling and polish.
+9. Seed data and README.
+
+### Implementation standards
+
+- **Errors:** typed, logged with context, mapped to user-safe messages. Never leak stack traces or SQL to the client.
+- **Validation:** one schema per boundary, parsed at the edge, not scattered through handlers.
+- **State:** server state and client state kept separate. No duplicated source of truth.
+- **Async:** every awaited call has a failure path. No floating promises.
+- **Queries:** no N+1. Batch or join. Paginate anything unbounded, with a hard `limit` ceiling.
+- **Migrations:** reversible, idempotent, safe to run twice.
+- **Types:** strict mode. No `any` without a comment explaining it.
+- **Config:** validated at boot. Missing var means the process exits with the name of the variable.
+
+### Frontend specifics
+
+- Skeleton states, not spinners on blank screens.
+- Optimistic updates only where rollback is obvious.
+- Disabled and pending states on every mutating control — double-submit must be impossible.
+- Forms validate on blur and on submit, and preserve input after failure.
+- Mobile breakpoint tested, not assumed.
+
+### Backend specifics
+
+- Idempotency keys on anything that creates or charges.
+- Rate limits on auth and any public write.
+- Timeouts on every outbound call.
+- Structured logs with request IDs threaded through.
+
+## Phase 3 — Verify
+
+Run the `assets/checklists/pre-ship.md`. Then, at minimum:
+
+- Cold start from a clean checkout following only the README.
+- Full core loop as a new user with no seed data.
+- Auth bypass attempt on every protected route.
+- Malformed input to every endpoint.
+- Migration forward, back, forward.
+- One broken dependency — confirm graceful failure.
+
+Report results as a table: check, pass/fail, evidence. Anything unverified gets listed as unverified. Do not round up to "should work."
+
+## Output contract
+
+Every build response ends with:
+
+- **What's here** — file tree, one line each for anything non-obvious.
+- **What works** — verified, with how you verified it.
+- **What's untested** — named explicitly, no rounding up.
+- **Run it** — exact commands.
+- **Next three** — highest-value follow-ups, ordered.
+
+## Anti-patterns
+
+- Scaffolding that doesn't start.
+- `catch (e) {}` swallowing everything.
+- Client-side-only auth checks.
+- Unbounded `SELECT *` on a list view.
+- Business logic in components or controllers.
+- Config read from twenty places instead of one.
+- Placeholder text shipped as real copy.
+- "Add tests later."
+- Explaining the code you just wrote instead of letting it be read.
+- Claiming done when the dev server was never started.
+
+## Escalate instead of guessing when
+
+- Money, PII, or compliance is in the core loop.
+- Two stacks are genuinely equivalent and the choice is expensive to reverse.
+- The user's existing codebase conflicts with a standard above — follow the codebase, note the divergence once.
+
+===== FILE: skills/advanced-app-builder/references/stack-matrix.md =====
+# Stack Matrix
+
+Pick one primary block. Swap modules replace it entirely — never mix.
+
+## Default primary (use unless told otherwise)
+
+| Layer | Choice |
+|---|---|
+| Framework | Next.js, App Router, TypeScript strict |
+| DB | Postgres 16 |
+| Access | Drizzle ORM, migrations committed |
+| Styling | Tailwind + shadcn/ui primitives |
+| Validation | Zod, at every boundary |
+| Tests | Vitest (unit), Playwright (e2e) |
+| Deploy | Vercel, or Docker per `deployment-targets.md` |
+
+Justification line required in Phase 1: name the boring reason, e.g. "server components remove a client fetch layer; Postgres because the data is relational."
+
+## Swap A — Python service
+
+Replace framework, ORM, validation, tests:
+
+- FastAPI + Pydantic v2, SQLAlchemy 2.0 + Alembic, pytest.
+- Sync handlers unless I/O-bound; async only with a measured reason.
+- `ruff` + `mypy --strict` in CI.
+- Frontend stays Next.js and talks over a typed client generated from the OpenAPI schema.
+
+## Swap B — Supabase
+
+- Supabase Postgres + Auth + Storage. RLS **on every table**, no exceptions.
+- RLS policies are the permission matrix, not a supplement to it.
+- Client uses the anon key; service-role key only in server contexts.
+- Migrations via Supabase CLI, checked in.
+
+## Swap C — Existing monorepo
+
+- Read conventions first: `turbo.json`/`nx.json`, shared packages, lint config, test runner, existing patterns.
+- New code matches the surrounding code even where this skill disagrees. Note divergence once, then comply.
+- Reuse existing UI primitives and API clients. Don't introduce a second styling system.
+
+## Banned by default
+
+- Mongo for relational data. Redis as primary store. GraphQL for a single consumer. tRPC across a service boundary. ORMs without migration files. `moment`. CSS-in-JS added to a Tailwind project. A second component library alongside an existing one.
+
+## Version policy
+
+Pin majors. Use the version the ecosystem documents for, not the newest tag. If a dependency is <1.0, say so in the output contract.
+
+===== FILE: skills/advanced-app-builder/references/data-modeling.md =====
+# Data Modeling
+
+## Required on every table
+
+`id` (uuid v7 or bigserial), `created_at`, `updated_at` (timestamptz, default now).
+
+## Rules
+
+- **Normalize to 3NF** unless a read pattern proves it costs too much. Denormalize with a comment naming the query that justified it.
+- **Foreign keys always declared**, with `ON DELETE` behavior chosen explicitly. Default `RESTRICT`; `CASCADE` only for true ownership.
+- **Index every FK.** Index every column in a `WHERE` or `ORDER BY` on a list view.
+- **Enums** as Postgres enum types or a lookup table. Never a bare string column with values enforced only in app code.
+- **Money** as integer minor units. Never float.
+- **Timestamps** as `timestamptz`. Never naive.
+- **Soft delete** (`deleted_at`) where history or audit matters; hard delete elsewhere. Partial indexes on live rows.
+- **PII** isolated in its own columns or table so it can be redacted and audited.
+- **Constraints in the DB:** not-null, unique, check. App validation is UX; the DB is truth.
+
+## Naming
+
+`snake_case`, plural tables, singular columns, `{entity}_id` for FKs. Join tables: `{a}_{b}` alphabetical.
+
+## Migrations
+
+One file per change, reversible, idempotent. Data backfills in a separate migration from schema. Never edit an applied migration.
+
+## Review pass
+
+Before writing the schema: what query does each index serve? What breaks on delete? What's the row-count ceiling in a year? Anything over ~10M rows gets a partition or archive plan.
+
+===== FILE: skills/advanced-app-builder/references/auth-and-permissions.md =====
+# Auth and Permissions
+
+## Forced
+
+- **Session cookies:** `httpOnly`, `secure`, `sameSite=lax`, rotating, server-issued.
+- **Hashing:** argon2id (bcrypt acceptable). Never SHA-family for passwords.
+- **One helper:** `requireUser()` and `requireRole(r)` used by every protected route. No inline checks.
+- **Server-side enforcement** on every route and every query. UI gating is cosmetic.
+- **Object-level checks:** ownership verified in the query (`WHERE owner_id = $user`), not after fetch.
+- **Timing-safe** compare for tokens and reset codes.
+- **Rate limit** login, register, reset, and every public write.
+- **Reset tokens:** single-use, hashed at rest, 30 min expiry.
+- **Session invalidation** on password change.
+
+## Banned by default
+
+- Clerk and Auth.js — vendor lock and config sprawl respectively. Use only if the user names one.
+- JWT in `localStorage`.
+- Client-side-only role checks.
+- `role` in a cookie without server verification.
+- Shared API keys for user actions.
+- Custom crypto.
+- Email enumeration in auth errors ("no such user").
+- Magic links without expiry and single-use enforcement.
+
+## Permission matrix
+
+Required in Phase 1, before any handler:
+
+| Entity | anon | user | owner | admin |
+|---|---|---|---|---|
+| posts | none | read | read/write | read/write/delete |
+
+Cell vocabulary: `none`, `read`, `own`, `write`, `delete`. One row per entity. Every cell implemented in both the query and a test.
+
+## Role checks
+
+Roles from the DB per request, cached no longer than the session. Never from a claim the client can mint.
+
+===== FILE: skills/advanced-app-builder/references/error-shapes.md =====
+# Error Shapes
+
+## Wire format
+
+`application/problem+json`, RFC 9457:
+
+```json
+{ "type": "https://errors.example/validation", "title": "Invalid input",
+  "status": 422, "code": "VALIDATION_FAILED",
+  "errors": [{ "field": "email", "message": "Invalid email" }],
+  "request_id": "01J..." }
+```
+
+## Code taxonomy
+
+Stable, screaming-snake, namespaced: `AUTH_*`, `VALIDATION_*`, `NOT_FOUND`, `CONFLICT`, `RATE_LIMITED`, `UPSTREAM_*`, `INTERNAL`.
+
+## Rules
+
+- Every error has a code. Codes are API surface — never rename one.
+- Client-safe messages only. Stack traces and SQL go to logs, joined by `request_id`.
+- `5xx` logs at error with context; `4xx` logs at info without noise.
+- Never `200` with `{ ok: false }`.
+- Never expose whether an email exists.
+- Catch-all handler at the framework boundary maps unhandled throws to `INTERNAL` and a `request_id`.
+
+## Client side
+
+Map codes to copy in one table. Generic fallback for unknown codes, with the `request_id` shown. Field errors bind to inputs by name. Mutations surface errors inline, never as `alert()`.
+
+===== FILE: skills/advanced-app-builder/references/frontend-components.md =====
+# Frontend Components
+
+## Structure
+
+Server component by default. `'use client'` only for state, effects, or event handlers, and pushed to the leaf.
+
+## Every interactive component
+
+- Loading, empty, error, and disabled states — all four, defined.
+- `aria-*` on custom controls; native elements first.
+- Keyboard path complete; visible focus ring.
+- Pending state on mutating controls; double-submit impossible.
+- Error rendered adjacent to the field or action.
+
+## Conventions
+
+- PascalCase file = component name. One exported component per file, plus its types.
+- Props typed explicitly; no `any`, no `React.FC`.
+- Composition over boolean props: `children` and slots before a seventh flag.
+- Logic in hooks (`use-*.ts`), not components.
+- No business rules in components.
+- Semantic tokens from the theme, not raw hex.
+- Skeletons that match final layout dimensions.
+
+## Forms
+
+Zod schema shared with the server. Validate on blur and submit. Preserve input on failure. Disable submit while pending. Announce success without a modal.
+
+## Banned
+
+`alert`/`confirm`. `dangerouslySetInnerHTML` without sanitization. Inline styles outside one-off layout. `useEffect` for derived state. Index as `key` on a mutable list.
+
+===== FILE: skills/advanced-app-builder/references/testing-patterns.md =====
+# Testing Patterns
+
+## Split
+
+- **Unit (Vitest):** pure logic, parsers, formatters, permission predicates. No I/O.
+- **Integration:** real Postgres, real migrations, real handlers. Mock only third-party networks.
+- **E2E (Playwright):** the core loop only, plus every auth boundary.
+
+## Required per route
+
+1. Happy path.
+2. Unauthenticated → 401.
+3. Wrong role → 403.
+4. Malformed body → 422 with field errors.
+5. Not-found → 404 where an ID is path-bound.
+
+## Rules
+
+- Never mock the database in integration tests. Testcontainers or a disposable schema.
+- Fixtures are factories with overridable fields, not shared globals.
+- Each test owns its data and cleans up.
+- Assert on shape and status, not full-body snapshots.
+- Freeze time for anything expiry-related.
+- Name tests as behavior: `rejects expired reset token`, not `test 3`.
+- A bug fix ships with the test that would have caught it.
+
+## Banned
+
+Snapshot tests as the only coverage. `sleep` for async settling. Tests that depend on run order. Asserting on log output. Testing framework internals instead of behavior.
+
+## Gates
+
+CI runs typecheck, lint, unit, integration. E2E runs on the preview deploy. A red gate blocks merge — no `--force` past it.
+
+===== FILE: skills/advanced-app-builder/references/deployment-targets.md =====
+# Deployment Targets
+
+## Universal requirements
+
+- Health endpoint: `GET /healthz` → `200`, no auth, checks DB and any critical dependency.
+- Env validated at boot; missing var exits with its name.
+- Build is reproducible from lockfile; no `latest` tags.
+- Migrations run as a release step, not on boot race.
+- Logs structured JSON to stdout.
+- Secrets injected, never baked into the image.
+
+## Vercel
+
+`vercel.json` with region, framework preset, and function timeouts. Preview deploys per PR. Env scoped per environment. Postgres from Neon/Supabase, pooled connection string.
+
+## Docker / Fly / Railway
+
+Multi-stage build, non-root user, distroless or slim base, `.dockerignore`. `HEALTHCHECK` wired to `/healthz`. Fly: `fly.toml` with `min_machines_running = 1` and a health check block. Railway: `railway.json` with restart policy.
+
+## Bare VPS
+
+systemd unit with `Restart=always`, env from a `600` file, nginx or Caddy in front, certbot renewal, `ufw` limited to 22/80/443. Deploy by tagged release, not `git pull` on the box.
+
+## Rollback
+
+Every target ships with a documented rollback: previous image tag, previous release, or `fly releases`. Migrations reversible or forward-only with a paired down-migration. State which in the README.
+
+## Never
+
+Deploy to prod without a health check. Run migrations and app start concurrently. Use the same DB for preview and prod. Leave the platform default domain on a real product.
+
+===== FILE: skills/advanced-app-builder/assets/checklists/pre-build.md =====
+# Pre-Build
+
+- [ ] Five-line frame written: does, who, core loop, out of scope, constraints
+- [ ] Stack chosen, justification in one line
+- [ ] Data model drafted, every FK indexed, delete behavior set
+- [ ] Permission matrix filled, every cell
+- [ ] Route table complete: method, path, auth, input, success, failures
+- [ ] Failure modes listed per core-loop step
+- [ ] Irreversible decisions flagged and confirmed
+- [ ] Env var list written, `.env.example` planned
+- [ ] Migration strategy set
+- [ ] Seed data plan
+
+===== FILE: skills/advanced-app-builder/assets/checklists/pre-ship.md =====
+# Pre-Ship
+
+**Start**
+- [ ] Clean checkout starts following README only
+- [ ] Missing env var fails loudly with the variable name
+- [ ] `/healthz` returns 200
+
+**Auth**
+- [ ] Every protected route rejects anon
+- [ ] Every route rejects wrong role
+- [ ] Object access checked per row, not per route
+- [ ] Session invalidated on password change
+- [ ] Login/register/reset rate limited
+
+**Data**
+- [ ] Migration forward, back, forward
+- [ ] Migration idempotent
+- [ ] No unbounded list query
+- [ ] Every list paginated with a ceiling
+
+**Input**
+- [ ] Malformed body on every endpoint → 422 with field errors
+- [ ] Oversized payload rejected
+- [ ] Every boundary schema-parsed
+
+**Core loop**
+- [ ] Completes as a brand-new user with no seed data
+- [ ] Every failure state renders something usable
+- [ ] Double-submit impossible on every mutating control
+
+**Polish**
+- [ ] Empty, loading, error states on every list and form
+- [ ] Mobile breakpoint checked
+- [ ] Keyboard-only pass on the core loop
+- [ ] No `console.log`, no commented-out code, no placeholder copy
+- [ ] No secret in the repo
+- [ ] `tsc --noEmit` / `mypy` clean
+- [ ] Tests pass: happy path + auth fail + validation fail per route
+
+**Ship**
+- [ ] README: setup, env, run, test, deploy, rollback
+- [ ] Rollback path documented
+- [ ] Untested items listed in the output contract

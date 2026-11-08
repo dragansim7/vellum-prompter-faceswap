@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Vellum",
+      "hasCanvas": false,
+      "bodyTextLen": 608,
+      "bodyTextHash": "d98129d29ae3d2b7672d7feccc8d1697d160d58de94260cbc637bd7f4b9d9d5a",
+      "bodyTextPrefix": "STILL TO PROMPT Vellum A local still becomes a structured prompt",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Vellum",
+      "hasCanvas": false,
+      "bodyTextLen": 608,
+      "bodyTextHash": "d98129d29ae3d2b7672d7feccc8d1697d160d58de94260cbc637bd7f4b9d9d5a",
+      "bodyTextPrefix": "STILL TO PROMPT Vellum A local still becomes a structured prompt",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

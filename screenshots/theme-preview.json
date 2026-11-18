@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Vellum",
+      "hasCanvas": false,
+      "bodyTextLen": 624,
+      "bodyTextHash": "7bfc9944cbc9552bf2593878466a06171078260a4be57dac0e3bb597bed45f00",
+      "bodyTextPrefix": "Prompt Face Lab STILL TO PROMPT Vellum A local still becomes a s",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/theme-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Vellum",
+      "hasCanvas": false,
+      "bodyTextLen": 624,
+      "bodyTextHash": "7bfc9944cbc9552bf2593878466a06171078260a4be57dac0e3bb597bed45f00",
+      "bodyTextPrefix": "Prompt Face Lab STILL TO PROMPT Vellum A local still becomes a s",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/theme-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/theme-preview.json"
+}

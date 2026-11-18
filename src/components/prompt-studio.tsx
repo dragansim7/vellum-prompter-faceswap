@@ -296,7 +296,7 @@ export function PromptStudio() {
       <header className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 sm:flex-row sm:items-end sm:justify-between sm:px-6">
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-brass">Still to prompt</p>
-          <h1 className="font-display text-4xl italic leading-none text-fg sm:text-5xl">Vellum</h1>
+          <h1 className="font-display text-4xl tracking-tight text-fg sm:text-5xl">Vellum</h1>
         </div>
         <p className="max-w-sm text-sm text-pretty text-muted sm:text-right">
           A local still becomes a structured prompt you can paste. Open register writes what is in the frame,
@@ -341,7 +341,7 @@ export function PromptStudio() {
             ) : (
               <span className="flex flex-col items-center gap-3 px-6 py-16 text-center">
                 <ImagePlus className="size-8 text-brass" aria-hidden="true" />
-                <span className="font-display text-2xl italic text-fg">Drop a still</span>
+                <span className="font-display text-2xl tracking-tight text-fg">Drop a still</span>
                 <span className="max-w-xs text-sm text-pretty text-muted">
                   JPEG, PNG, WebP, or GIF from this device. Nothing is read until you ask.
                 </span>
@@ -411,7 +411,7 @@ export function PromptStudio() {
         <section className="panel flex min-h-[28rem] flex-col gap-4 p-4 lg:col-span-7 lg:p-5">
           {!pack && !busy ? (
             <div className="flex flex-1 flex-col gap-3">
-              <p className="font-display text-3xl italic text-fg">What you get</p>
+              <p className="font-display text-3xl tracking-tight text-fg">What you get</p>
               <ul className="max-w-md space-y-2 text-sm text-pretty text-muted">
                 <li>A short read of the frame, so you can see what was actually noticed.</li>
                 <li>Paste-ready lines for Universal, Midjourney, Flux, SDXL, and Grok Imagine.</li>
@@ -436,7 +436,7 @@ export function PromptStudio() {
             <div className={busy ? "opacity-60" : ""}>
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="font-display text-3xl italic text-fg">{pack.title}</h2>
+                  <h2 className="font-display text-3xl tracking-tight text-fg">{pack.title}</h2>
                   {pack.read ? <p className="mt-2 max-w-xl text-sm text-pretty text-muted">{pack.read}</p> : null}
                 </div>
                 <button

@@ -2,8 +2,8 @@ import { i as __toESM, n as __exportAll } from "../_runtime.mjs";
 import { _ as createFileRoute, b as require_jsx_runtime, d as Scripts, f as HeadContent, g as lazyRouteComponent, h as Outlet, m as createRouter, q as require_react, v as createRootRoute, y as useRouter } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as TriangleAlert } from "../_libs/lucide-react.mjs";
 import { a as union, i as string, n as number, r as object, t as literal } from "../_libs/zod.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-CgSu4y1W.js
-var router_CgSu4y1W_exports = /* @__PURE__ */ __exportAll({ getRouter: () => getRouter });
+//#region node_modules/.nitro/vite/services/ssr/assets/router-CzdTleGp.js
+var router_CzdTleGp_exports = /* @__PURE__ */ __exportAll({ getRouter: () => getRouter });
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var FALLBACK_MESSAGE = "An unexpected error occurred. Try reloading the page.";
@@ -331,7 +331,7 @@ function PreviewHostBridge() {
 	}, [router]);
 	return null;
 }
-var styles_default = "/assets/styles-D24od5FQ.css";
+var styles_default = "/assets/styles-DGXYzpKu.css";
 var APP_NAME = "Vellum";
 var Route$1 = createRootRoute({
 	head: () => ({
@@ -348,7 +348,7 @@ var Route$1 = createRootRoute({
 			},
 			{
 				name: "theme-color",
-				content: "#0c0d0b"
+				content: "#07080a"
 			}
 		],
 		links: [
@@ -380,7 +380,7 @@ var Route$1 = createRootRoute({
 			},
 			{
 				rel: "stylesheet",
-				href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,520;0,9..144,640;1,9..144,520&family=Outfit:wght@340;420;520;600&display=swap"
+				href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
 			}
 		]
 	}),
@@ -395,7 +395,7 @@ var Route$1 = createRootRoute({
 		] })]
 	})
 });
-var $$splitComponentImporter = () => import("./routes-BXEmVykL.mjs");
+var $$splitComponentImporter = () => import("./routes-DuFhKAVL.mjs");
 var rootRouteChildren = { IndexRoute: createFileRoute("/")({ component: lazyRouteComponent($$splitComponentImporter, "component") }).update({
 	id: "/",
 	path: "/",
@@ -410,4 +410,4 @@ function getRouter() {
 	});
 }
 //#endregion
-export { getRouter, router_CgSu4y1W_exports as t };
+export { getRouter, router_CzdTleGp_exports as t };

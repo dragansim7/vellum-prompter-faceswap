@@ -15,7 +15,7 @@ export const Route = createRootRoute({
         name: "description",
         content: "Turn a still into a structured, copy-paste image prompt.",
       },
-      { name: "theme-color", content: "#0c0d0b" },
+      { name: "theme-color", content: "#07080a" },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
@@ -26,7 +26,7 @@ export const Route = createRootRoute({
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,520;0,9..144,640;1,9..144,520&family=Outfit:wght@340;420;520;600&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
       },
     ],
   }),

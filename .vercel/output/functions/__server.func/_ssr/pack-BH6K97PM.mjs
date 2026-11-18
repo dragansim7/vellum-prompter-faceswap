@@ -1,4 +1,4 @@
-//#region node_modules/.nitro/vite/services/ssr/assets/pack-BiQa4ZfJ.js
+//#region node_modules/.nitro/vite/services/ssr/assets/pack-BH6K97PM.js
 var DIALECTS = [
 	{
 		id: "universal",
@@ -81,8 +81,8 @@ function parsePack(raw) {
 	const promptsIn = record.prompts ?? {};
 	const blocks = { ...EMPTY_BLOCKS };
 	const prompts = { ...EMPTY_PROMPTS };
-	for (const block of BLOCKS) blocks[block.id] = asText(blocksIn[block.id], 1200);
-	for (const dialect of DIALECTS) prompts[dialect.id] = asText(promptsIn[dialect.id], 4e3);
+	for (const block of BLOCKS) blocks[block.id] = asText(blocksIn[block.id], 1800);
+	for (const dialect of DIALECTS) prompts[dialect.id] = asText(promptsIn[dialect.id], 6e3);
 	if (!prompts.universal && !prompts.grok && !prompts.flux) return null;
 	if (!prompts.universal) prompts.universal = prompts.grok || prompts.flux || prompts.midjourney || prompts.sdxl;
 	return {

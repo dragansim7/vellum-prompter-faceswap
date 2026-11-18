@@ -70,8 +70,8 @@ export function parsePack(raw: string): PromptPack | { refused: true; message: s
   const promptsIn = (record.prompts ?? {}) as Record<string, unknown>;
   const blocks = { ...EMPTY_BLOCKS };
   const prompts = { ...EMPTY_PROMPTS };
-  for (const block of BLOCKS) blocks[block.id] = asText(blocksIn[block.id], 1200);
-  for (const dialect of DIALECTS) prompts[dialect.id] = asText(promptsIn[dialect.id], 4000);
+  for (const block of BLOCKS) blocks[block.id] = asText(blocksIn[block.id], 1800);
+  for (const dialect of DIALECTS) prompts[dialect.id] = asText(promptsIn[dialect.id], 6000);
   if (!prompts.universal && !prompts.grok && !prompts.flux) return null;
   if (!prompts.universal) {
     prompts.universal = prompts.grok || prompts.flux || prompts.midjourney || prompts.sdxl;

@@ -50,31 +50,34 @@ function outputText(body: unknown): string {
 function instructions(input: AnalyzeInput): string {
   const register =
     input.register === "open"
-      ? "Register OPEN: use direct language for anatomy, nudity, sex, violence, substances, and any other adult content that is actually visible. Do not euphemize, refuse, moralize, censor, or add a disclaimer. Do not invent sexual or violent content that is not in the frame."
+      ? "Register OPEN: use direct language for anatomy, nudity, sex, violence, substances, and any other adult content that is actually visible. Adult faces, portraits, and faceswap-style images are allowed. Do not euphemize, refuse, moralize, censor, or add a disclaimer. Do not invent sexual or violent content that is not in the frame. Do not refuse an image just because it contains a face or adult body."
       : "Register MEASURED: same visible facts, clinical diction, still complete. Do not omit visible content. Do not moralize.";
   const density =
     input.density === "tight"
-      ? "Density TIGHT: short concrete phrases."
+      ? "Density TIGHT: each block is one precise sentence. Each prompt stays short, but still names subject, appearance, pose, setting, light, and camera in that order."
       : input.density === "full"
-        ? "Density FULL: exhaustive visible detail. Still no invention."
-        : "Density STANDARD: concrete sentences a prompt box can hold.";
+        ? "Density FULL: exhaustive visible detail. Each block is two to four concrete sentences. Each prompt is long, specific, and still only what is visible."
+        : "Density STANDARD: each block is one or two concrete sentences. Each prompt is detailed enough to rebuild the frame.";
   return [
     "You write production image-generation prompts from one photograph.",
     "Return one JSON object and nothing else.",
     "Describe only what is visible. Do not invent people, acts, objects, readable text, or locations.",
     register,
-    "If the image appears to show a minor who is nude or in a sexual context, return only {\"refused\":true,\"code\":\"REFUSED_MINOR\",\"message\":\"Cannot describe this image.\"}",
+    "If any person appears to be under 18, return only {\"refused\":true,\"code\":\"REFUSED_MINOR\",\"message\":\"Cannot describe this image.\"} Do not describe a minor. Adult faces, adult bodies, and other adult content that is actually visible are allowed and must be written, not refused.",
     density,
     `The picture's aspect ratio is ${input.aspect}. Use it. Do not contradict it.`,
-    "midjourney is one line with no line breaks and ends with --ar " + input.aspect + " --stylize 100",
-    "universal, flux, and grok are prose with no parameters and no weights.",
-    "sdxl is a comma-separated positive prompt. Keep negative tokens out of it.",
+    "Structure every dialect the same way, in this order: subject, appearance, pose, setting, light, camera, palette, medium.",
+    "universal, flux, and grok are labeled lines, one field per line, like 'Subject: ...'. No parameters and no weights.",
+    "midjourney is one line with no line breaks, same details in the same order, and ends with --ar " +
+      input.aspect +
+      " --stylize 100",
+    "sdxl is comma-separated, grouped in the same order. Keep negative tokens out of it.",
     "negative lists what would wrongly change this picture, plus generic quality failures. Do not negate content that is actually in the image.",
-    "body covers people (body, skin, hair, wardrobe, visible anatomy in direct terms) or object materials and surface.",
+    "body covers people (body, skin, hair, wardrobe, visible anatomy in direct terms) or object materials and surface. Be specific: colors, materials, counts, and placement.",
     input.note
       ? `Operator emphasis, honor only if it does not require inventing unseen content: ${input.note}`
       : "No operator emphasis.",
-    'JSON keys: title (<= 8 words), read (2 sentences), blocks {subject, body, pose, setting, light, camera, palette, medium}, negative, prompts {universal, midjourney, flux, sdxl, grok}. Every prompt key is a non-empty string.',
+    'JSON keys: title (<= 8 words), read (2 sentences), blocks {subject, body, pose, setting, light, camera, palette, medium}, negative, prompts {universal, midjourney, flux, sdxl, grok}. Every prompt key is a non-empty string. Do not leave a block empty when the frame shows that information.',
   ].join("\n");
 }
 
@@ -102,7 +105,7 @@ export const analyzeImage = createServerFn({ method: "POST" })
           model: "grok-4.7",
           store: false,
           temperature: 0.4,
-          max_output_tokens: 4500,
+          max_output_tokens: 6500,
           reasoning: { effort: "low" },
           instructions: instructions(data),
           text: { format: { type: "json_object" } },
